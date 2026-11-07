@@ -1,32 +1,45 @@
-ASSUME (Change if asked by Interviewer)
-1. 50 Cr Daily Active Users
-2. 1 User 40 msg in one Day
-3. 2 Types of msg -> Text | Photo
-4. 1 text msg -> 200bytes
-5. 1 photo -> 200kb
-6. 10% of Msgs -> Photo | 90% of Msgs -> Text
+SYSTEM DESIGN ESTIMATION (Chat App: Text + Photo)
 
-1] THROUGHPUT:
-Users= 50 * 10^7
-Req/Day of each User = 40
-No. of Req/Day = 40 * 50*10^7
-No. of Req/Sec = (40/86400) * 50*10^7 ==> Throughput = 2LAKH
+ASSUMPTIONS (change if interviewer says so)
+- DAU = 50 Cr = 5 x 10^8
+- Messages per user per day = 40
+- Types: Text 90% | Photo 10%
+- Text = 200 B | Photo = 200 KB
+- Per user per day = 36 text + 4 photos
+- Seconds in a day = 86,400 (approx 10^5 for quick math)
 
-2] BANDWIDTH:
-[ 36*200 (text) + 4*200*10^3 (photo) / 86400 ] * 50Cr * 8(bytes to bits) BITS PER SECOND
-This is Normal Bandwidth 
-Peak Bandwidth = 3x Assume
+1] THROUGHPUT
+- Requests/day = 40 x 5x10^8 = 2 x 10^10
+- Requests/sec = 2x10^10 / 86,400 = approx 2.3 x 10^5
+- Throughput = ~2.3 lakh req/sec (saying "~2 lakh" is fine)
 
-3] No. of SERVERS:
-Assume 1 Server -> 1000 Req/Sec
-Thus, 200 Servers Required
+2] BANDWIDTH
+Formula: [(36x200 + 4x200x10^3) / 86,400] x 5x10^8 x 8
+- Per user per day = 7,200 B + 800,000 B = ~807 KB
+- All users per day = ~4 x 10^14 B = 400 TB
+- Per second = 4x10^14 / 86,400 = ~4.6 GB/s
+- In bits = 4.6 GB/s x 8 = ~37 Gbps (normal)
+- Peak (3x) = ~110 Gbps
 
-4] Storage in 1 Day and No. of Servers Required for Servers:
-Text: 36 × 200 B × 5×10⁸ = 3.6 × 10¹² B ≈ 3.6 TB/day
-Photo: 4 × 200 KB × 5×10⁸ = 4 × 10¹⁴ B ≈ 400 TB/day
-Total ≈ 400 TB/day, and photos are about 99% of it.
-Assume 1 storage server = 10 TB.
+Common mistakes:
+- Forgetting to multiply by number of users
+- Dividing only one term by 86,400 (divide both text and photo)
+- Forgetting x 8 (bytes to bits)
 
-Per day: 400 TB / 10 TB = 40 servers
-With 3x replication: 40 × 3 = 120 servers per day of data
-Per year: 400 TB × 365 ≈ 146 PB, so about 14,600 servers, or ~44,000 with 3x replication
+3] APPLICATION SERVERS
+Assume 1 server = 1000 req/sec
+- Normal = 2.3 lakh / 1000 = ~230 servers
+- Peak (3x) = 230 x 3 = ~700 servers
+- Quote the peak number
+
+4] STORAGE PER DAY
+- Text = 36 x 200 B x 5x10^8 = 3.6 TB/day
+- Photo = 4 x 200 KB x 5x10^8 = 400 TB/day
+- Total = ~400 TB/day (photos are ~99%)
+
+5] STORAGE SERVERS
+Assume 1 storage server = 10 TB
+- Per day = 400 TB / 10 TB = 40 servers
+- Per day with 3x replication = 40 x 3 = 120 servers
+- Per year = 400 TB x 365 = ~146 PB = ~14,600 servers
+- Per year with 3x replication = ~44,000 servers
