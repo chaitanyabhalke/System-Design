@@ -2,7 +2,7 @@
 1. <100ms (Very Good)
 2. 100-300ms (Very Good)
 3. 1sec (Humans Notice)
-4. >1sec (Bad)
+4. > 1sec (Bad)
 
 2] THROUGHPUT -> Maximum Requests in 1sec that system supports
 
